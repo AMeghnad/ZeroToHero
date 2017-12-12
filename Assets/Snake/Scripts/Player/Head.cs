@@ -7,47 +7,36 @@ namespace Snake
 {
     public class Head : MonoBehaviour
     {
-        public float moveRate = 0.3f;       // Movement Interval
-        public float sprintRate = 0.1f;     // Sprint Interval
-        public float keyDownDuration = 0.25f;  // How long does a key have to be down before sprinting?
-        public GameObject tailPrefab;       // Prefab of tail to spawn
+        public float moveRate = 0.3f;               // Movement Interval
+        public float sprintRate = 0.1f;             // Sprint Interval
+        public float keyDownDuration = 0.25f;       // How long does a key have to be down before sprinting?
+        public GameObject tailPrefab;               // Prefab of tail to spawn
+        public Vector2 direction = Vector2.right;   // Movement direction of snake (Right by default)
 
-        private float keyDownTimer = 0f;// How long has any key been pressed?
-        private float moveTimer = 0f;   // Timer to keep track of elapsed time
-        private float interval = 0f;    // Store the move rate / sprint rate
-        private Vector2 direction = Vector2.right;  // Movement direction of snake (Right by default)
-        private bool hasEaten = false;              // has the snake eaten?
+        private float keyDownTimer = 0f;    // How long has any key been pressed?
+        private float moveTimer = 0f;       // Timer to keep track of elapsed time
+        private float interval = 0f;        // Store the move rate / sprint rate        
+        private bool hasEaten = false;      // has the snake eaten?
         private List<Transform> tail = new List<Transform>();   // List to keep track of tails
 
-        void CheckInput()
+        public void Sprint()
         {
-            // Check for sprint
-            if (Input.anyKey)
+            // Count how long a key is down for
+            keyDownTimer += Time.deltaTime;
+            // If key has been down for a set time (duration)
+            if (keyDownTimer >= keyDownDuration)
             {
-                // Count how long a key is down for
-                keyDownTimer += Time.deltaTime;
-                if (keyDownTimer >= keyDownDuration)
-                {
-                    interval = sprintRate;
-                }
+                // Snake is now running
+                interval = sprintRate;
             }
-            else
-            {
-                // Reset the key down timer
-                keyDownTimer = 0f;
-                // Reset the move speed
-                interval = moveRate;
-            }
+        }
 
-            // Check which direction we want the snake to go next frame
-            if ((Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D)) && !direction.Equals(Vector2.left))
-                direction = Vector2.right;
-            else if ((Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S)) && !direction.Equals(Vector2.up))
-                direction = Vector2.down;
-            else if ((Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A)) && !direction.Equals(Vector2.right))
-                direction = Vector2.left;
-            else if ((Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W)) && !direction.Equals(Vector2.down))
-                direction = Vector2.up;
+        public void Walk()
+        {
+            // Reset the key down timer
+            keyDownTimer = 0f;
+            // Reset the move speed
+            interval = moveRate;
         }
 
         void AppendTail(Vector3 gapPos)
@@ -108,6 +97,8 @@ namespace Snake
                 Destroy(other.gameObject);
                 // Tell GameManager to spawn things
                 GameManager.Instance.Spawn();
+                // Tell GameManager we scored!
+                GameManager.Instance.AddScore(1);
             }
             else
             {
@@ -119,8 +110,6 @@ namespace Snake
         // Update is called once per frame
         void Update()
         {
-            // Checks for user input
-            CheckInput();
             // Count up the timer
             moveTimer += Time.deltaTime;
             // Is it time to move?

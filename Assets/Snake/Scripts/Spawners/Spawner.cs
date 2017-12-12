@@ -15,13 +15,19 @@ namespace Snake
         public Transform borderLeft;
         public Transform borderRight;
 
-        // Use this for initialization
+        //// Use this for initialization
         void Start()
         {
-            // Subscribe function to this function call
-            GameManager.Instance.onSpawn += Spawn;
-            // InvokeRepeating("Spawn", startTime, spawnRate);
-            StartCoroutine(SpawnFirst(startTime));
+            //    // Subscribe function to this function call
+            //    GameManager.Instance.onSpawn += Spawn;
+            //    // InvokeRepeating("Spawn", startTime, spawnRate);
+            //    StartCoroutine(SpawnFirst(startTime));
+            Subscribe();
+        }
+
+        void OnDestroy()
+        {
+            Unsubscribe();
         }
 
         public void Subscribe()
@@ -36,11 +42,11 @@ namespace Snake
             GameManager.Instance.onSpawn -= Spawn;
         }
 
-        IEnumerator SpawnFirst(float delay)
-        {
-            yield return new WaitForSeconds(delay);
-            Spawn();
-        }
+        //IEnumerator SpawnFirst(float delay)
+        //{
+        //    yield return new WaitForSeconds(delay);
+        //    Spawn();
+        //}
 
         // Spawn the food randomly
         void Spawn()
