@@ -2,15 +2,34 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CookieAnim : MonoBehaviour {
+namespace CookieClicker
+{
+    public class CookieAnim : MonoBehaviour
+    {
+        public Animator anim;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+        private Cookie cookie;
+
+        // Use this for initialization
+        void Start()
+        {
+            cookie = GetComponent<Cookie>();
+            cookie.onClick += OnClick;
+        }
+
+        void OnClick(Vector3 point)
+        {
+            anim.SetTrigger("Click");
+        }
+
+        void OnMouseEnter()
+        {
+            anim.SetTrigger("Enter");
+        }
+
+        void OnMouseExit()
+        {
+            anim.SetTrigger("Exit");
+        }
+    }
 }

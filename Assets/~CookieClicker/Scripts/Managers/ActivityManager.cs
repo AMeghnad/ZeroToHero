@@ -1,16 +1,36 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using LitJson;
 
-public class ActivityManager : MonoBehaviour {
+namespace CookieClicker
+{
+    public class ActivityManager : MonoBehaviour
+    {
+        public GameObject activityPrefab;
+        [Header("References")]
+        public Transform activityContainer;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+        private List<Activity> activities = new List<Activity>();
+
+        public static ActivityManager Instance = null;
+
+        // Use this for initialization
+        void Awake()
+        {
+            if (Instance == null)
+                Instance = this;
+        }
+
+        public Activity CreateActivity(JsonData data)
+        {
+            // Instantiate a new activity
+            GameObject clone = Instantiate(activityPrefab, activityContainer, false);
+            clone.SetActive(false); // Deactivate object
+            Activity activity = clone.GetComponent<Activity>(); // Get activity
+            activity.data = new ActivityData(data); // Apply new data to activity
+            activities.Add(activity); // Add the activity to list
+            return activity; // Return the activity created 
+        }
+    }
 }
